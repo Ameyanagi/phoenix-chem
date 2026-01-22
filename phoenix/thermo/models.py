@@ -20,9 +20,10 @@ The module provides two patterns for temperature-dependent calculations:
 from __future__ import annotations
 
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -163,9 +164,7 @@ class ThermoProperty:
         """Percent deviation from reference value."""
         if self.reference_value is None or abs(self.reference_value.value) < 1e-10:
             return None
-        return 100.0 * (self.value - self.reference_value.value) / abs(
-            self.reference_value.value
-        )
+        return 100.0 * (self.value - self.reference_value.value) / abs(self.reference_value.value)
 
     def format_breakdown(self, property_name: str = "ENTHALPY OF FORMATION") -> str:
         """
@@ -208,9 +207,7 @@ class ThermoProperty:
 
         if self.breakdown:
             # Column headers
-            lines.append(
-                f"{'Group':<28} {'Count':>5} {'Contribution':>14} {'Total':>10}"
-            )
+            lines.append(f"{'Group':<28} {'Count':>5} {'Contribution':>14} {'Total':>10}")
             lines.append("-" * 60)
 
             # Group contributions
@@ -239,8 +236,7 @@ class ThermoProperty:
             lines.append("")
             ref_method = self.reference_value.method or "Database"
             lines.append(
-                f"REFERENCE VALUE ({ref_method}):"
-                f"{self.reference_value.value:>+23.2f} {self.unit}"
+                f"REFERENCE VALUE ({ref_method}):{self.reference_value.value:>+23.2f} {self.unit}"
             )
             if self.deviation is not None:
                 lines.append(f"DEVIATION:{self.deviation:>+49.2f} {self.unit}")
@@ -282,7 +278,7 @@ class ThermoState:
     Examples
     --------
     >>> from phoenix import Compound
-    >>> ethanol = Compound.from_smiles('CCO')
+    >>> ethanol = Compound.from_smiles("CCO")
     >>> state = ethanol.thermo_at(T=500)
     >>> print(f"H = {state.H.value:.2f} kJ/mol")
     >>> print(f"S = {state.S.value:.2f} J/(mol·K)")
@@ -370,7 +366,7 @@ class ThermoPropertyAccessor:
 
     Examples
     --------
-    >>> compound = Compound.from_smiles('CCO')
+    >>> compound = Compound.from_smiles("CCO")
 
     >>> # As property (298.15 K)
     >>> hf = compound.enthalpy_of_formation

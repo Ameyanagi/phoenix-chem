@@ -26,10 +26,7 @@ For auto-balancing:
 Examples
 --------
 >>> # Full auto-balance (all coefficients determined)
->>> rxn = Reaction.from_smiles(
-...     reactants=["CH4", "O2"],
-...     products=["CO2", "H2O"]
-... )
+>>> rxn = Reaction.from_smiles(reactants=["CH4", "O2"], products=["CO2", "H2O"])
 >>> rxn.balance()
 >>> print(rxn)  # CH4 + 2 O2 -> CO2 + 2 H2O
 
@@ -37,7 +34,7 @@ Examples
 >>> from phoenix import Auto
 >>> rxn = Reaction.from_smiles(
 ...     reactants=[("OCC(O)CO", 1), ("[H][H]", Auto)],  # glycerol + H2
-...     products=[("CC(O)CO", 1), ("O", Auto)]          # propanediol + H2O
+...     products=[("CC(O)CO", 1), ("O", Auto)],  # propanediol + H2O
 ... )
 >>> rxn.balance()
 >>> print(rxn.coefficients)  # {glycerol: 1, H2: 1, propanediol: 1, H2O: 1}
@@ -57,7 +54,6 @@ from scipy import linalg as scipy_linalg
 
 from phoenix.core.compound import Compound
 from phoenix.exceptions import (
-    BalanceError,
     OverconstrainedError,
     UnderconstrainedError,
 )
@@ -191,21 +187,19 @@ class Reaction:
     --------
     >>> # All explicit coefficients
     >>> rxn = Reaction.from_smiles(
-    ...     reactants=[("CH4", 1), ("O2", 2)],
-    ...     products=[("CO2", 1), ("H2O", 2)]
+    ...     reactants=[("CH4", 1), ("O2", 2)], products=[("CO2", 1), ("H2O", 2)]
     ... )
 
     >>> # Full auto-balance
     >>> rxn = Reaction.from_smiles(
     ...     reactants=["CH4", "O2"],  # No coefficients -> all Auto
-    ...     products=["CO2", "H2O"]
+    ...     products=["CO2", "H2O"],
     ... )
     >>> rxn.balance()
 
     >>> # Mixed explicit/auto
     >>> rxn = Reaction.from_smiles(
-    ...     reactants=[("OCC(O)CO", 1), ("[H][H]", Auto)],
-    ...     products=[("CC(O)CO", 1), ("O", Auto)]
+    ...     reactants=[("OCC(O)CO", 1), ("[H][H]", Auto)], products=[("CC(O)CO", 1), ("O", Auto)]
     ... )
     >>> rxn.balance()
     """
@@ -268,20 +262,18 @@ class Reaction:
 
         2. Tuples with explicit coefficients:
            >>> Reaction.from_smiles(
-           ...     reactants=[("CH4", 1), ("O2", 2)],
-           ...     products=[("CO2", 1), ("H2O", 2)]
+           ...     reactants=[("CH4", 1), ("O2", 2)], products=[("CO2", 1), ("H2O", 2)]
            ... )
 
         3. Mixed explicit/Auto coefficients:
            >>> Reaction.from_smiles(
            ...     reactants=[("OCC(O)CO", 1), ("[H][H]", Auto)],
-           ...     products=[("CC(O)CO", 1), ("O", Auto)]
+           ...     products=[("CC(O)CO", 1), ("O", Auto)],
            ... )
 
         4. Legacy keyword argument style:
            >>> Reaction.from_smiles(
-           ...     reactant_smiles=[("CH4", 1), ("O2", 2)],
-           ...     product_smiles=[("CO2", 1), ("H2O", 2)]
+           ...     reactant_smiles=[("CH4", 1), ("O2", 2)], product_smiles=[("CO2", 1), ("H2O", 2)]
            ... )
 
         Parameters
@@ -334,9 +326,7 @@ class Reaction:
                     if coeff is None or coeff is Auto:
                         species_list.append(ReactionSpecies(compound, None, is_auto=True))
                     elif isinstance(coeff, (int, float)):
-                        species_list.append(
-                            ReactionSpecies(compound, float(coeff), is_auto=False)
-                        )
+                        species_list.append(ReactionSpecies(compound, float(coeff), is_auto=False))
                     else:
                         raise ValueError(
                             f"Invalid coefficient type: {type(coeff)}. "
@@ -531,7 +521,7 @@ class Reaction:
 
         >>> rxn = Reaction.from_smiles(
         ...     reactants=[("OCC(O)CO", 1), ("[H][H]", Auto)],
-        ...     products=[("CC(O)CO", 1), ("O", Auto)]
+        ...     products=[("CC(O)CO", 1), ("O", Auto)],
         ... )
         >>> rxn.balance()
         >>> print(rxn.coefficients)
@@ -542,7 +532,6 @@ class Reaction:
 
         # Collect indices of unknown coefficients
         n_reactants = len(self._reactants)
-        n_species = len(self.all_species)
         species_list = self.all_species
 
         unknown_indices = []
@@ -558,8 +547,6 @@ class Reaction:
 
         # Get sorted elements for consistent ordering
         elements = sorted(self.elements)
-        n_elements = len(elements)
-        n_unknowns = len(unknown_indices)
 
         # Build the composition matrix A where A[j, i] = count of element j in species i
         # Sign convention: reactants negative, products positive
@@ -675,9 +662,7 @@ class Reaction:
         coefficients = list(np.abs(nu))
 
         # Process coefficients (normalize, integerize)
-        coefficients = self._process_coefficients(
-            coefficients, normalize, prefer_integers
-        )
+        coefficients = self._process_coefficients(coefficients, normalize, prefer_integers)
 
         # Validate: all coefficients should be positive
         for i, coeff in enumerate(coefficients):
@@ -805,7 +790,7 @@ class Reaction:
             min_unknown = min(unknown_coeffs_list)
             if normalize and min_unknown > 0:
                 scale = 1.0 / min_unknown
-                for i, species_idx in enumerate(unknown_indices):
+                for species_idx in unknown_indices:
                     full_coeffs[species_idx] *= scale
 
             if prefer_integers:
@@ -826,8 +811,7 @@ class Reaction:
         Returns matrix where columns span null(A).
         """
         U, S, Vh = scipy_linalg.svd(A, full_matrices=True)
-        n = A.shape[1]
-        rank = np.sum(S > tol)
+        rank = np.sum(tol < S)
         null_space = Vh[rank:, :].T
         return null_space
 
@@ -1059,13 +1043,13 @@ class Reaction:
         balanced_str = ", balanced" if self._balanced else ""
         return f"Reaction({' + '.join(r_formulas)} >> {' + '.join(p_formulas)}{balanced_str})"
 
-    def to_equation(self, *, use_names: bool = False) -> str:
+    def to_equation(self, *, _use_names: bool = False) -> str:
         """
         Format as a chemical equation string.
 
         Parameters
         ----------
-        use_names : bool
+        _use_names : bool
             If True, use compound names instead of formulas (not yet implemented)
 
         Returns

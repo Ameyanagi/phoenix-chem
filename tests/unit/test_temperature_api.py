@@ -8,8 +8,6 @@ import pytest
 from phoenix import Compound
 from phoenix.thermo.models import (
     TEMP_DEFAULT,
-    TEMP_MAX_WARN,
-    TEMP_MIN_WARN,
     ThermoProperty,
     ThermoPropertyAccessor,
     ThermoState,
@@ -326,7 +324,7 @@ class TestGibbsEnergyCalculation:
         # G = H - T*S, with S converted from J to kJ
         expected = H - T * (S / 1000.0)
 
-        assert G == pytest.approx(expected, rel=1e-6)
+        assert pytest.approx(expected, rel=1e-6) == G
 
     def test_gibbs_energy_temperature_dependence(self):
         """Test that G changes with temperature."""

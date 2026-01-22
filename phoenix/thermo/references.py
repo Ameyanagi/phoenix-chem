@@ -123,4 +123,4 @@ def get_reference(key: str) -> Reference:
     try:
         return StandardReference[key.upper()].value
     except KeyError:
-        raise ValueError(f"Unknown reference key: {key}")
+        raise ValueError(f"Unknown reference key: {key}") from None

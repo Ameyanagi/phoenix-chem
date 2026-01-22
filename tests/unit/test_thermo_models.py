@@ -5,7 +5,6 @@ import pytest
 from phoenix.thermo.models import GroupContribution, ThermoProperty, ThermoValue
 from phoenix.thermo.references import (
     BENSON_1976,
-    CHEMICALS_LIB,
     NIST_WEBBOOK,
     Reference,
     StandardReference,

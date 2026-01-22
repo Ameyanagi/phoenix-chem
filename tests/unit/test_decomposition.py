@@ -1,14 +1,13 @@
 """Unit tests for decomposition energetics."""
 
-import numpy as np
 import pytest
 
 from phoenix import Compound
 from phoenix.hazard.decomposition import (
     DECOMPOSITION_PRODUCTS,
+    R_GAS,
     DecompositionComparison,
     DecompositionResult,
-    R_GAS,
     _apply_hierarchy,
     _build_atom_matrix,
     calculate_max_decomposition,
@@ -428,9 +427,7 @@ class TestLPEdgeCases:
         result = calculate_max_decomposition(compound, method="lp")
 
         # Should produce SO2 or S(s)
-        has_sulfur_product = (
-            result.products.get("SO2", 0) > 0 or result.products.get("S", 0) > 0
-        )
+        has_sulfur_product = result.products.get("SO2", 0) > 0 or result.products.get("S", 0) > 0
         assert has_sulfur_product
 
 

@@ -82,7 +82,7 @@ def estimate_delta_hf(compound: Compound, *, T: float = 298.15) -> ThermoPropert
     Examples
     --------
     >>> from phoenix import Compound
-    >>> ethanol = Compound.from_smiles('CCO')
+    >>> ethanol = Compound.from_smiles("CCO")
     >>> hf = estimate_delta_hf(ethanol)  # At 298.15 K
     >>> hf_500 = estimate_delta_hf(ethanol, T=500)  # At 500 K
     """
@@ -142,7 +142,9 @@ def estimate_delta_hf(compound: Compound, *, T: float = 298.15) -> ThermoPropert
         ) from e
 
 
-def _estimate_from_pgradd(compound: Compound, temperature_K: float = 298.15) -> tuple[float, list[str]]:
+def _estimate_from_pgradd(
+    compound: Compound, temperature_K: float = 298.15
+) -> tuple[float, list[str]]:
     """
     Estimate ΔHf° using pgradd Benson GA.
 
@@ -332,7 +334,7 @@ def estimate_entropy(compound: Compound, *, T: float = 298.15) -> ThermoProperty
     Examples
     --------
     >>> from phoenix import Compound
-    >>> ethanol = Compound.from_smiles('CCO')
+    >>> ethanol = Compound.from_smiles("CCO")
     >>> s = estimate_entropy(ethanol)  # At 298.15 K
     >>> s_500 = estimate_entropy(ethanol, T=500)  # At 500 K
     """
@@ -414,10 +416,7 @@ def estimate_heat_capacity(compound: Compound, temperature_K: float = 298.15) ->
 
     # Fallback: Dulong-Petit approximation
     n_atoms = compound.num_atoms
-    if n_atoms <= 2:
-        val = 29.1
-    else:
-        val = 0.6 * (3 * n_atoms - 6) * 8.314 + 2.5 * 8.314
+    val = 29.1 if n_atoms <= 2 else 0.6 * (3 * n_atoms - 6) * 8.314 + 2.5 * 8.314
 
     return ThermoProperty(
         value=val,
@@ -555,9 +554,7 @@ def _estimate_with_breakdown(
                 )
 
     if not contributions:
-        raise MissingGroupError(
-            message=f"No thermochemistry data for groups in {smiles}"
-        )
+        raise MissingGroupError(message=f"No thermochemistry data for groups in {smiles}")
 
     # Convert total to kJ/mol
     H_kJ = total_HoRT * R * temperature_K / 1000.0

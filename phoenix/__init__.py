@@ -36,7 +36,6 @@ References
 
 from phoenix.batch import BatchResult, screen
 from phoenix.core import Auto, Compound, Reaction, ReactionSpecies
-from phoenix.thermo.models import ThermoProperty
 from phoenix.exceptions import (
     BalanceError,
     DecompositionError,
@@ -49,6 +48,7 @@ from phoenix.exceptions import (
     UnsupportedStructureError,
 )
 from phoenix.hazard import HazardResult
+from phoenix.thermo.models import ThermoProperty
 
 __version__ = "0.1.0"
 

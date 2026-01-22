@@ -19,29 +19,27 @@ Note: SMILES notation is used throughout. Common molecules:
 """
 
 import pytest
-import numpy as np
 
-from phoenix.core.reaction import Auto, Reaction, ReactionSpecies, BalanceError
+from phoenix.core.reaction import Auto, Reaction, ReactionSpecies
 from phoenix.exceptions import OverconstrainedError, UnderconstrainedError
-
 
 # =============================================================================
 # SMILES notation reference for tests
 # =============================================================================
 # These are valid SMILES strings (not molecular formulas):
-METHANE = "C"           # CH4 - implicit hydrogens
-OXYGEN = "O=O"          # O2
-WATER = "O"             # H2O
-CO2 = "O=C=O"           # CO2
-AMMONIA = "N"           # NH3
-H2 = "[H][H]"           # H2 (explicit)
-PROPANE = "CCC"         # C3H8
-GLYCEROL = "OCC(O)CO"   # C3H8O3
-PROPANEDIOL = "CC(O)CO" # C3H8O2 (1,2-propanediol)
+METHANE = "C"  # CH4 - implicit hydrogens
+OXYGEN = "O=O"  # O2
+WATER = "O"  # H2O
+CO2 = "O=C=O"  # CO2
+AMMONIA = "N"  # NH3
+H2 = "[H][H]"  # H2 (explicit)
+PROPANE = "CCC"  # C3H8
+GLYCEROL = "OCC(O)CO"  # C3H8O3
+PROPANEDIOL = "CC(O)CO"  # C3H8O2 (1,2-propanediol)
 GLUCOSE = "OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O"  # C6H12O6
-N2 = "N#N"              # N2
-CO = "[C-]#[O+]"        # CO (carbon monoxide)
-OZONE = "[O-][O+]=O"    # O3
+N2 = "N#N"  # N2
+CO = "[C-]#[O+]"  # CO (carbon monoxide)
+OZONE = "[O-][O+]=O"  # O3
 
 
 class TestReactionCreation:
@@ -102,7 +100,9 @@ class TestReactionCreation:
 
     def test_from_reaction_smiles_with_coefficients(self):
         """Parse reaction SMILES string with coefficients."""
-        rxn = Reaction.from_reaction_smiles(f"{METHANE} + 2 {OXYGEN} >> {CO2} + 2 {WATER}", auto_balance=False)
+        rxn = Reaction.from_reaction_smiles(
+            f"{METHANE} + 2 {OXYGEN} >> {CO2} + 2 {WATER}", auto_balance=False
+        )
         assert rxn.reactants[0].coefficient == 1.0
         assert rxn.reactants[1].coefficient == 2.0
         assert rxn.products[0].coefficient == 1.0
@@ -110,7 +110,9 @@ class TestReactionCreation:
 
     def test_from_reaction_smiles_without_coefficients(self):
         """Parse reaction SMILES without coefficients (default to 1)."""
-        rxn = Reaction.from_reaction_smiles(f"{METHANE} + {OXYGEN} >> {CO2} + {WATER}", auto_balance=False)
+        rxn = Reaction.from_reaction_smiles(
+            f"{METHANE} + {OXYGEN} >> {CO2} + {WATER}", auto_balance=False
+        )
         # Without explicit coefficients, default is 1.0 (not Auto)
         # This matches standard chemistry notation
         assert all(s.coefficient == 1.0 for s in rxn.all_species)
@@ -554,7 +556,7 @@ def example_error_handling():
     try:
         rxn = Reaction.from_smiles(
             reactants=[METHANE, OXYGEN],  # Methane combustion with multiple products
-            products=[CO, CO2, WATER],    # Both CO and CO2 can form
+            products=[CO, CO2, WATER],  # Both CO and CO2 can form
         )
         rxn.balance()
     except UnderconstrainedError as e:

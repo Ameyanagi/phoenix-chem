@@ -26,13 +26,12 @@ Thermodynamic Hierarchy (priority order):
 from __future__ import annotations
 
 import warnings
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 from scipy.optimize import linprog
 
-from phoenix.exceptions import DecompositionError
 from phoenix.thermo.data import get_formation_enthalpy
 
 if TYPE_CHECKING:
@@ -175,10 +174,10 @@ def calculate_max_decomposition(
 
     Examples
     --------
-    >>> compound = Compound.from_smiles('CC')
+    >>> compound = Compound.from_smiles("CC")
     >>> result = compound.max_decomposition()  # hierarchy (default)
-    >>> result_lp = compound.max_decomposition(method='lp')
-    >>> result_both = compound.max_decomposition(method='both')
+    >>> result_lp = compound.max_decomposition(method="lp")
+    >>> result_both = compound.max_decomposition(method="both")
     >>> print(result_both.deviation_percent)
     """
     if method == "both":
@@ -206,9 +205,7 @@ def calculate_max_decomposition(
         return _calculate_hierarchy(compound, gas_temperature_K)
 
 
-def _calculate_hierarchy(
-    compound: Compound, gas_temperature_K: float
-) -> DecompositionResult:
+def _calculate_hierarchy(compound: Compound, gas_temperature_K: float) -> DecompositionResult:
     """Calculate decomposition using CHETAH analytical hierarchy."""
     comp = compound.composition.copy()
     mw = compound.molecular_weight
@@ -271,6 +268,7 @@ def _calculate_lp(compound: Compound, gas_temperature_K: float) -> Decomposition
         warnings.warn(
             f"LP solver failed: {result.message}. Falling back to hierarchy method.",
             UserWarning,
+            stacklevel=2,
         )
         return _calculate_hierarchy(compound, gas_temperature_K)
 

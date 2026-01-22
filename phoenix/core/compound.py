@@ -19,7 +19,6 @@ from phoenix.exceptions import (
     UnsupportedElementError,
     UnsupportedStructureError,
 )
-
 from phoenix.thermo.models import ThermoProperty, ThermoPropertyAccessor, ThermoState
 
 if TYPE_CHECKING:
@@ -228,7 +227,7 @@ class Compound:
 
         Examples
         --------
-        >>> compound = Compound.from_smiles('CCO')
+        >>> compound = Compound.from_smiles("CCO")
 
         >>> # As property (298.15 K) - backward compatible
         >>> hf = compound.enthalpy_of_formation
@@ -265,7 +264,7 @@ class Compound:
 
         Examples
         --------
-        >>> compound = Compound.from_smiles('CCO')
+        >>> compound = Compound.from_smiles("CCO")
 
         >>> # As property (298.15 K)
         >>> s = compound.entropy
@@ -325,7 +324,7 @@ class Compound:
 
         Examples
         --------
-        >>> compound = Compound.from_smiles('CCO')
+        >>> compound = Compound.from_smiles("CCO")
         >>> state = compound.thermo_at(T=500)
         >>> print(f"H = {state.H.value:.2f} kJ/mol")
         >>> print(f"S = {state.S.value:.2f} J/(mol·K)")
@@ -381,19 +380,17 @@ class Compound:
 
         Examples
         --------
-        >>> compound = Compound.from_smiles('CC')
+        >>> compound = Compound.from_smiles("CC")
         >>> result = compound.max_decomposition()  # hierarchy
-        >>> result_lp = compound.max_decomposition(method='lp')
-        >>> result_both = compound.max_decomposition(method='both')
+        >>> result_lp = compound.max_decomposition(method="lp")
+        >>> result_both = compound.max_decomposition(method="both")
         >>> print(result.gas_volume_L_g)  # L/g at 298.15 K
-        >>> print(result.gas_moles)       # moles gas per mol compound
-        >>> print(result.gas_composition) # {"H2": 1.0}
+        >>> print(result.gas_moles)  # moles gas per mol compound
+        >>> print(result.gas_composition)  # {"H2": 1.0}
         """
         from phoenix.hazard.decomposition import calculate_max_decomposition
 
-        return calculate_max_decomposition(
-            self, method=method, gas_temperature_K=gas_temperature_K
-        )
+        return calculate_max_decomposition(self, method=method, gas_temperature_K=gas_temperature_K)
 
     def evaluate_hazard(self) -> HazardResult:
         """
