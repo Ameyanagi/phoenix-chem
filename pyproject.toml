@@ -47,8 +47,14 @@ dev = [
     "ruff>=0.4",
     "pre-commit>=3.0",
 ]
+docs = [
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.0",
+    "mkdocstrings[python]>=0.24",
+    "pymdown-extensions>=10.0",
+]
 all = [
-    "phoenix-chem[pgradd,dev]",
+    "phoenix-chem[pgradd,dev,docs]",
 ]
 
 [project.urls]

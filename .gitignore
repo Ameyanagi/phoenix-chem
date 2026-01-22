@@ -15,3 +15,7 @@ openspec/
 CLAUDE.md
 AGENTS.md
 *.local.md
+
+# Documentation build
+site/
+llms-full.txt

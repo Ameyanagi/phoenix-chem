@@ -1,0 +1,47 @@
+# PHOENIX
+
+> PHOENIX (Physicochemical Hazard Observation & Energetics Numerical Indexing eXpert) is a Python library for reactive chemical hazard evaluation. It provides thermodynamic estimation via Benson Group Additivity, maximum decomposition energy calculations, and CHETAH-style hazard classification.
+>
+> **SCREENING PURPOSES ONLY** - Results must not be used as the sole basis for safety decisions. Experimental validation is required before handling energetic materials.
+
+PHOENIX supports compounds containing: C, H, N, O, S, P, F, Cl, Br. Accuracy is typically ±10 kJ/mol for formation enthalpies.
+
+## Getting Started
+
+- [Installation](docs/getting-started/installation.md): Install via pip or uv, Python 3.12+ required
+- [Quick Start](docs/getting-started/quickstart.md): 5-minute introduction to PHOENIX
+
+## User Guide
+
+- [Core Concepts](docs/user-guide/core-concepts.md): Oxygen balance, enthalpy of formation, maximum heat of decomposition
+- [Working with Compounds](docs/user-guide/compounds.md): Create compounds from SMILES, access properties
+- [Thermodynamics](docs/user-guide/thermodynamics.md): Temperature-dependent properties, Benson GA estimation
+- [Hazard Evaluation](docs/user-guide/hazard-evaluation.md): Screen compounds for reactive hazards, CHETAH criteria
+- [Decomposition Analysis](docs/user-guide/decomposition.md): Calculate maximum decomposition energy
+- [Chemical Reactions](docs/user-guide/reactions.md): Balance reactions, calculate reaction thermodynamics
+- [Batch Processing](docs/user-guide/batch-processing.md): Process multiple compounds at once
+- [Functional Groups](docs/user-guide/functional-groups.md): Detect hazardous functional groups
+- [Error Handling](docs/user-guide/error-handling.md): Handle exceptions gracefully
+
+## API Reference
+
+- [Compound](docs/api/compound.md): Main class for molecular representation from SMILES
+- [Reaction](docs/api/reaction.md): Chemical reaction balancing and thermodynamics
+- [Hazard](docs/api/hazard.md): HazardResult, DecompositionResult, functional group detection
+- [Thermo](docs/api/thermo.md): ThermoProperty, ThermoState, temperature-dependent properties
+- [Batch](docs/api/batch.md): BatchResult, screen() function for multiple compounds
+- [Exceptions](docs/api/exceptions.md): InvalidSmilesError, UnsupportedElementError, and other exceptions
+
+## Examples
+
+- [examples/01_quick_start.py](examples/01_quick_start.py): Basic API introduction with NIST data
+- [examples/02_energetic_screening.py](examples/02_energetic_screening.py): Batch hazard evaluation
+- [examples/03_decomposition_analysis.py](examples/03_decomposition_analysis.py): Decomposition pathways and gas generation
+- [examples/04_reaction_thermodynamics.py](examples/04_reaction_thermodynamics.py): Reaction calculations with NIST reference
+- [examples/05_solvent_safety.py](examples/05_solvent_safety.py): Solvent safety screening workflow
+
+## Optional
+
+- [Chemistry Background](docs/reference/chemistry-background.md): Detailed explanation of OB%, ΔHd, CHETAH criteria
+- [Data Sources](docs/reference/data-sources.md): NIST-JANAF, chemicals library, pgradd information
+- [Limitations](docs/reference/limitations.md): Accuracy constraints, supported elements, screening vs. assessment

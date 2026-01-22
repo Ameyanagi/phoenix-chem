@@ -1,0 +1,106 @@
+site_name: PHOENIX Documentation
+site_description: Python library for reactive chemical hazard evaluation
+site_url: https://phoenix-chem.readthedocs.io
+repo_url: https://github.com/yourorg/phoenix-chem
+repo_name: phoenix-chem
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep orange
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep orange
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 2
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+  - tables
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+  - User Guide:
+    - Core Concepts: user-guide/core-concepts.md
+    - Working with Compounds: user-guide/compounds.md
+    - Thermodynamics: user-guide/thermodynamics.md
+    - Hazard Evaluation: user-guide/hazard-evaluation.md
+    - Decomposition Analysis: user-guide/decomposition.md
+    - Chemical Reactions: user-guide/reactions.md
+    - Batch Processing: user-guide/batch-processing.md
+    - Functional Groups: user-guide/functional-groups.md
+    - Error Handling: user-guide/error-handling.md
+  - API Reference:
+    - Overview: api/index.md
+    - Compound: api/compound.md
+    - Reaction: api/reaction.md
+    - Hazard: api/hazard.md
+    - Thermo: api/thermo.md
+    - Batch: api/batch.md
+    - Exceptions: api/exceptions.md
+  - Examples: examples/index.md
+  - Reference:
+    - Chemistry Background: reference/chemistry-background.md
+    - Data Sources: reference/data-sources.md
+    - Limitations: reference/limitations.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/yourorg/phoenix-chem
