@@ -58,11 +58,11 @@ print(f"\nEnergy Release:")
 print(f"  ΔHd = {result.delta_hd_kJ_mol:.1f} kJ/mol")
 print(f"  ΔHd = {result.delta_hd_cal_g:.1f} cal/g")
 
-# Note: TNT is oxygen-deficient, so it produces CO and C(s) instead of all CO2
+# Note: TNT is oxygen-deficient, so it produces C(s) and limited CO2 instead of all CO2
 print(f"\nInterpretation:")
 print(f"  - TNT is severely oxygen-deficient (OB = {tnt.oxygen_balance:.0f}%)")
 print(f"  - Not enough O to convert all C to CO2")
-print(f"  - Products include CO and solid carbon (soot)")
+print(f"  - Most carbon remains as solid C (graphite/soot)")
 
 # =============================================================================
 # Example 2: Nitroglycerin (Oxygen-Balanced)
@@ -141,7 +141,7 @@ print("Key Takeaways:")
 print("  1. Oxygen balance determines product distribution:")
 print("     - OB >> 0: Excess O2 released")
 print("     - OB ~ 0:  CO2 + H2O (most energetic)")
-print("     - OB << 0: CO + C(s) (soot)")
+print("     - OB << 0: C(s) + limited CO2 (soot formation)")
 print("  2. Gas volume scales with temperature (PV = nRT)")
 print("  3. LP and hierarchy methods should agree for typical compounds")
 print("  4. Gas generation is critical for vent sizing calculations")

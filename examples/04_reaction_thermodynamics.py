@@ -23,8 +23,23 @@ Chemical Background:
   - ΔH > 0: Endothermic (absorbs heat)
 """
 
+import contextlib
+import io
+import sys
+
 from phoenix import Compound, Reaction, Auto
 from phoenix.thermo import get_formation_enthalpy
+
+
+@contextlib.contextmanager
+def suppress_stdout():
+    """Suppress stdout to hide debug prints from third-party libraries."""
+    old_stdout = sys.stdout
+    sys.stdout = io.StringIO()
+    try:
+        yield
+    finally:
+        sys.stdout = old_stdout
 
 # =============================================================================
 # Example 1: Combustion of Methane
@@ -96,9 +111,11 @@ cyclohexane = Compound.from_smiles("C1CCCCC1")
 
 # Calculate reaction enthalpy manually
 # ΔH_rxn = Σ ΔHf(products) - Σ ΔHf(reactants)
-hf_benzene = benzene.enthalpy_of_formation.value
-hf_h2 = hydrogen.enthalpy_of_formation.value
-hf_cyclohexane = cyclohexane.enthalpy_of_formation.value
+# Note: suppress_stdout() hides debug prints from pgradd library
+with suppress_stdout():
+    hf_benzene = benzene.enthalpy_of_formation.value
+    hf_h2 = hydrogen.enthalpy_of_formation.value
+    hf_cyclohexane = cyclohexane.enthalpy_of_formation.value
 
 delta_h_rxn = hf_cyclohexane - (hf_benzene + 3 * hf_h2)
 
