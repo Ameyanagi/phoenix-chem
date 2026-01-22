@@ -25,7 +25,7 @@ For contributing or development:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourorg/phoenix-chem.git
+git clone https://github.com/Ameyanagi/phoenix-chem.git
 cd phoenix-chem
 
 # Create virtual environment

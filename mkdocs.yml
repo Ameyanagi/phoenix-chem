@@ -1,7 +1,7 @@
 site_name: PHOENIX Documentation
 site_description: Python library for reactive chemical hazard evaluation
-site_url: https://phoenix-chem.readthedocs.io
-repo_url: https://github.com/yourorg/phoenix-chem
+site_url: https://Ameyanagi.github.io/phoenix-chem/
+repo_url: https://github.com/Ameyanagi/phoenix-chem
 repo_name: phoenix-chem
 
 theme:
@@ -103,4 +103,4 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/yourorg/phoenix-chem
+      link: https://github.com/Ameyanagi/phoenix-chem

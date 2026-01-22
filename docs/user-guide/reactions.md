@@ -220,6 +220,15 @@ if rxn.delta_g < 0:
     print("Reaction is spontaneous at 298 K")
 ```
 
+**Expected output:**
+```
+Reaction: CH4 + 2 O2 -> CO2 + 2 H2O
+ΔH_rxn = -802.6 kJ/mol
+ΔS_rxn = 169.4 J/(mol·K)
+ΔG_rxn = -853.1 kJ/mol
+Reaction is spontaneous at 298 K
+```
+
 ## ReactionSpecies
 
 Each species in a reaction is wrapped in `ReactionSpecies`:
@@ -373,6 +382,133 @@ rxn.balance()
 print(f"Reaction: {rxn}")
 print(f"ΔH_rxn = {rxn.delta_h:.1f} kJ/mol")
 ```
+
+## Troubleshooting
+
+### Common Balancing Errors
+
+#### OverconstrainedError: Impossible Constraints
+
+This occurs when fixed coefficients make balancing mathematically impossible:
+
+```python
+from phoenix import Reaction, OverconstrainedError
+
+try:
+    # Fix O2=1 but need O2=2 for balance
+    rxn = Reaction.from_smiles(
+        reactants=[("CH4", 1), ("O=O", 1)],  # Fixed: 1 O2
+        products=[("O=C=O", 1), ("O", 2)]    # Need: 2 O2 for 4 oxygen atoms
+    )
+    rxn.balance()
+except OverconstrainedError as e:
+    print(f"Error: {e}")
+    # Error: Cannot balance reaction with given constraints
+```
+
+**Solution:** Remove or adjust fixed coefficients that cause the imbalance.
+
+#### UnderconstrainedError: Multiple Solutions
+
+This occurs when the system has more unknowns than constraints:
+
+```python
+from phoenix import Reaction, UnderconstrainedError
+
+try:
+    # Combustion producing both CO and CO2
+    rxn = Reaction.from_smiles(
+        reactants=["C", "O=O"],      # 1 carbon source
+        products=["O=C=O", "C=O"]    # 2 carbon products
+    )
+    rxn.balance()
+except UnderconstrainedError as e:
+    print(f"Error: {e}")
+    print(f"Degrees of freedom: {e.degrees_of_freedom}")
+    # Multiple valid solutions exist
+```
+
+**Solution:** Fix one or more coefficients to constrain the system:
+
+```python
+rxn = Reaction.from_smiles(
+    reactants=["C", "O=O"],
+    products=[("O=C=O", 1), "C=O"]  # Fix CO2 coefficient
+)
+rxn.balance()  # Now has unique solution
+```
+
+### Common SMILES for Reactions
+
+| Molecule | SMILES | Notes |
+|----------|--------|-------|
+| Methane | `C` | Single carbon = CH4 |
+| Oxygen (O2) | `O=O` | Double bond |
+| Water | `O` | Single oxygen = H2O |
+| Carbon dioxide | `O=C=O` | |
+| Carbon monoxide | `[C-]#[O+]` or `C=O` | |
+| Hydrogen | `[H][H]` | Explicit H atoms |
+| Nitrogen | `N#N` | Triple bond |
+| Ammonia | `N` | Single nitrogen = NH3 |
+| Hydrogen peroxide | `OO` | |
+
+### Debugging Balance Issues
+
+Check if a reaction can be balanced before calling `balance()`:
+
+```python
+from phoenix import Reaction
+
+rxn = Reaction.from_smiles(
+    reactants=["C", "O=O"],
+    products=["O=C=O", "O"]
+)
+
+# Before balancing
+print(f"All Auto: {rxn.all_auto}")  # True if all coefficients are Auto
+print(f"Elements: {rxn.elements}")   # {'C', 'H', 'O'}
+
+# After balancing
+rxn.balance()
+print(f"Balanced: {rxn.is_balanced}")  # True
+print(f"Coefficients: {rxn.coefficients}")
+```
+
+### When to Use Each Option
+
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| Simple reactions (combustion, hydrolysis) | Full auto-balance with no fixed coefficients |
+| Known stoichiometry | Explicit coefficients for all species |
+| Partial information | Mix of fixed coefficients and `Auto` |
+| Multiple valid products | Fix at least one product coefficient |
+
+### Verifying Results
+
+Always verify thermodynamic results are reasonable:
+
+```python
+from phoenix import Reaction
+
+rxn = Reaction.from_smiles(
+    reactants=["C", "O=O"],
+    products=["O=C=O", "O"]
+)
+rxn.balance()
+
+# Sanity checks
+print(f"Reaction: {rxn}")
+print(f"ΔH_rxn = {rxn.delta_h:.1f} kJ/mol")  # -802.6 kJ/mol (exothermic)
+print(f"ΔS_rxn = {rxn.delta_s:.1f} J/(mol·K)")  # 169.4 J/(mol·K)
+print(f"ΔG_rxn = {rxn.delta_g:.1f} kJ/mol")  # -853.1 kJ/mol (spontaneous)
+
+# Combustion should be exothermic
+assert rxn.delta_h < 0, "Combustion should release heat"
+assert rxn.is_exothermic, "Expected exothermic reaction"
+```
+
+!!! warning "Validation Required"
+    PHOENIX thermodynamic values are estimates based on Benson Group Additivity. For critical applications, validate against experimental data or literature values.
 
 ---
 
