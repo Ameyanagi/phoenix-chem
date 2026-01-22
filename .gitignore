@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# AI assistant files
+.claude/
+openspec/
+CLAUDE.md
+AGENTS.md
+*.local.md

@@ -25,6 +25,7 @@ def _check_chemicals() -> bool:
     if _chemicals_available is None:
         try:
             import chemicals  # noqa: F401
+
             _chemicals_available = True
         except ImportError:
             _chemicals_available = False
@@ -301,6 +302,7 @@ def get_molecular_weight(identifier: str) -> float | None:
     if _check_chemicals():
         try:
             from chemicals import MW
+
             lookup_id = cas if cas else identifier
             return MW(lookup_id)
         except Exception:
@@ -331,6 +333,7 @@ def get_entropy(identifier: str, phase: str = "gas") -> float | None:
     if _check_chemicals():
         try:
             from chemicals import S0g, S0l, S0s
+
             lookup_id = cas if cas else identifier
 
             if phase == "gas":
@@ -372,6 +375,7 @@ def get_heat_capacity(
     if _check_chemicals():
         try:
             from chemicals import HeatCapacityGas, HeatCapacityLiquid, HeatCapacitySolid
+
             lookup_id = cas if cas else identifier
 
             if phase == "gas":
@@ -404,12 +408,28 @@ class DecompositionProducts:
 
     # Standard product set for analytical decomposition
     PRODUCTS = [
-        "CO2", "CO", "H2O", "H2", "N2", "O2",
-        "HF", "HCl", "HBr", "HI",
-        "SO2", "H2S", "NH3",
-        "C", "S", "P",
-        "F2", "Cl2", "Br2", "I2",
-        "P4O10", "CF4",
+        "CO2",
+        "CO",
+        "H2O",
+        "H2",
+        "N2",
+        "O2",
+        "HF",
+        "HCl",
+        "HBr",
+        "HI",
+        "SO2",
+        "H2S",
+        "NH3",
+        "C",
+        "S",
+        "P",
+        "F2",
+        "Cl2",
+        "Br2",
+        "I2",
+        "P4O10",
+        "CF4",
     ]
 
     @classmethod
@@ -501,6 +521,7 @@ def check_data_sources() -> dict[str, bool]:
     # Check janaf if needed for validation
     try:
         import janaf  # noqa: F401
+
         sources["janaf"] = True
     except ImportError:
         sources["janaf"] = False
