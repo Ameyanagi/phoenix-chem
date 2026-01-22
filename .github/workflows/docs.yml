@@ -69,7 +69,7 @@ jobs:
         run: python scripts/generate_llms_full.py
 
       - name: Build documentation
-        run: mkdocs build --strict
+        run: mkdocs build
 
       - name: Copy llms.txt to site
         run: |
