@@ -1,6 +1,6 @@
 [project]
 name = "phoenix-chem"
-version = "0.1.0"
+version = "0.1.1"
 description = "Physicochemical Hazard Observation & Energetics Numerical Indexing eXpert - A Python library for reactive chemical hazard evaluation"
 readme = "README.md"
 license = "MIT"
