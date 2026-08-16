@@ -305,12 +305,19 @@ def _estimate_entropy_from_pgradd(compound: Compound, temperature_K: float = 298
         raise MissingGroupError(message=f"No groups found for {smiles}")
 
     total_SoR = 0.0
+    matched = 0
     for group_name, count in descriptors.items():
         if group_name in lib:
             group_data = lib[group_name]
             if "thermochem" in group_data:
                 tc = group_data["thermochem"]
                 total_SoR += tc.get_SoR(temperature_K) * count
+                matched += 1
+
+    if matched == 0:
+        raise MissingGroupError(
+            message=f"No thermochemistry groups matched for {smiles}"
+        )
 
     return total_SoR * R  # J/(mol·K)
 
@@ -352,6 +359,24 @@ def estimate_entropy(compound: Compound, *, T: float = 298.15) -> ThermoProperty
         except Exception:
             pass
 
+    # Try chemicals library lookup (exact data, valid at 298.15 K)
+    try:
+        from phoenix.thermo.data import get_entropy
+
+        phase_name = {"g": "gas", "l": "liquid", "s": "solid"}.get(compound.phase, compound.phase)
+        val = get_entropy(compound.formula, phase=phase_name)
+        if val is not None:
+            return ThermoProperty(
+                value=val,
+                unit="J/(mol·K)",
+                uncertainty=2.0,  # Lookup is generally more reliable
+                source="chemicals (Lookup)",
+                phase=compound.phase,
+                temperature_K=T,  # Store requested T, though data is 298.15 K
+            )
+    except Exception:
+        pass
+
     # Fallback: rough estimate based on molecular size
     n_atoms = compound.num_atoms
     val = 100.0 + 20.0 * (n_atoms / 10)
@@ -375,12 +400,19 @@ def _estimate_cp_from_pgradd(compound: Compound, temperature_K: float = 298.15) 
         raise MissingGroupError(message=f"No groups found for {smiles}")
 
     total_CpoR = 0.0
+    matched = 0
     for group_name, count in descriptors.items():
         if group_name in lib:
             group_data = lib[group_name]
             if "thermochem" in group_data:
                 tc = group_data["thermochem"]
                 total_CpoR += tc.get_CpoR(temperature_K) * count
+                matched += 1
+
+    if matched == 0:
+        raise MissingGroupError(
+            message=f"No thermochemistry groups matched for {smiles}"
+        )
 
     return total_CpoR * R  # J/(mol·K)
 
@@ -413,6 +445,23 @@ def estimate_heat_capacity(compound: Compound, temperature_K: float = 298.15) ->
             )
         except Exception:
             pass
+
+    # Try chemicals library lookup
+    try:
+        from phoenix.thermo.data import get_heat_capacity
+
+        phase_name = {"g": "gas", "l": "liquid", "s": "solid"}.get(compound.phase, compound.phase)
+        val = get_heat_capacity(compound.formula, temperature_K=temperature_K, phase=phase_name)
+        if val is not None:
+            return ThermoProperty(
+                value=val,
+                unit="J/(mol·K)",
+                uncertainty=2.0,  # Lookup is generally more reliable
+                source="chemicals (Lookup)",
+                phase=compound.phase,
+            )
+    except Exception:
+        pass
 
     # Fallback: Dulong-Petit approximation
     n_atoms = compound.num_atoms
