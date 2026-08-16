@@ -81,6 +81,78 @@ _FALLBACK_HF_LIQUID: dict[str, float] = {
     "H3PO4": -1271.7,
 }
 
+# Standard entropy S° at 298.15 K
+# Source: NIST-JANAF Thermochemical Tables, 4th Ed. (Chase, 1998)
+# Units: J/(mol·K)
+_FALLBACK_S_GAS: dict[str, float] = {
+    "CO2": 213.79,
+    "CO": 197.66,
+    "H2O": 188.84,
+    "H2": 130.68,
+    "N2": 191.61,
+    "O2": 205.15,
+    "NH3": 192.77,
+    "H2S": 205.81,
+    "SO2": 248.22,
+    "SO3": 256.77,
+    "HF": 173.78,
+    "HCl": 186.90,
+    "HBr": 198.70,
+    "HI": 206.59,
+    "HCN": 201.82,
+    "NO": 210.76,
+    "NO2": 240.04,
+    "N2O": 219.96,
+    "CH4": 186.25,
+    "CF4": 261.40,
+    "F2": 202.79,
+    "Cl2": 223.08,
+    "Br2": 245.47,
+    "I2": 260.69,
+}
+
+_FALLBACK_S_SOLID: dict[str, float] = {
+    "C": 5.74,  # graphite
+    "S": 32.05,  # rhombic
+    "P": 41.09,  # white
+    "I2": 116.14,
+}
+
+_FALLBACK_S_LIQUID: dict[str, float] = {
+    "H2O": 69.95,
+    "Br2": 152.21,
+}
+
+# Heat capacity Cp° at 298.15 K
+# Source: NIST-JANAF Thermochemical Tables, 4th Ed. (Chase, 1998)
+# Units: J/(mol·K)
+_FALLBACK_CP_GAS: dict[str, float] = {
+    "CO2": 37.13,
+    "CO": 29.14,
+    "H2O": 33.59,
+    "H2": 28.84,
+    "N2": 29.12,
+    "O2": 29.38,
+    "NH3": 35.65,
+    "H2S": 34.19,
+    "SO2": 39.87,
+    "SO3": 50.66,
+    "HF": 29.14,
+    "HCl": 29.14,
+    "HBr": 29.14,
+    "HI": 29.16,
+    "HCN": 35.86,
+    "NO": 29.86,
+    "NO2": 36.97,
+    "N2O": 38.62,
+    "CH4": 35.69,
+    "CF4": 61.09,
+    "F2": 31.30,
+    "Cl2": 33.95,
+    "Br2": 36.05,
+    "I2": 36.89,
+}
+
 _FALLBACK_MW: dict[str, float] = {
     "CO2": 44.01,
     "CO": 28.01,
@@ -336,16 +408,25 @@ def get_entropy(identifier: str, phase: str = "gas") -> float | None:
 
             lookup_id = cas if cas else identifier
 
+            val: float | None = None
             if phase == "gas":
-                return S0g(lookup_id)
+                val = S0g(lookup_id)
             elif phase == "liquid":
-                return S0l(lookup_id)
+                val = S0l(lookup_id)
             elif phase == "solid":
-                return S0s(lookup_id)
+                val = S0s(lookup_id)
+            if val is not None:
+                return val
         except Exception:
             pass
 
-    return None
+    # NIST-JANAF fallback table (works without the chemicals library)
+    fallback = {
+        "gas": _FALLBACK_S_GAS,
+        "liquid": _FALLBACK_S_LIQUID,
+        "solid": _FALLBACK_S_SOLID,
+    }.get(phase, {})
+    return fallback.get(identifier)
 
 
 def get_heat_capacity(
@@ -378,18 +459,24 @@ def get_heat_capacity(
 
             lookup_id = cas if cas else identifier
 
+            val: float | None = None
             if phase == "gas":
                 cp_obj = HeatCapacityGas(CASRN=lookup_id)
-                return cp_obj.T_dependent_property(temperature_K)
+                val = cp_obj.T_dependent_property(temperature_K)
             elif phase == "liquid":
                 cp_obj = HeatCapacityLiquid(CASRN=lookup_id)
-                return cp_obj.T_dependent_property(temperature_K)
+                val = cp_obj.T_dependent_property(temperature_K)
             elif phase == "solid":
                 cp_obj = HeatCapacitySolid(CASRN=lookup_id)
-                return cp_obj.T_dependent_property(temperature_K)
+                val = cp_obj.T_dependent_property(temperature_K)
+            if val is not None:
+                return val
         except Exception:
             pass
 
+    # NIST-JANAF fallback table (298.15 K values; works without chemicals)
+    if phase == "gas":
+        return _FALLBACK_CP_GAS.get(identifier)
     return None
 
 
